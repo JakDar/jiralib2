@@ -398,13 +398,16 @@ ARGS is an association list of the fields to set for the issue."
   "Change the issue type of ISSUE-ID to TYPE."
   (jiralib2-update-issue issue-id `(issuetype . ((name . ,type)))))
 
-(defun jiralib2-if-plan-issue (issue-id datestring)
+(defun jiralib2-if-plan-issue (issue-id datestring effort)
   "Plan issue for next week and IntraFind PSO team"
   (jiralib2-session-call (format "/rest/api/2/issue/%s" issue-id)
                          :type "PUT"
                          :data (json-encode
                                 `((fields . ((customfield_10131  ((value . "Ja")))
-                                             (customfield_10122 . ,datestring)))))))
+                                             (customfield_10122 . ,datestring)
+                                             (timetracking
+                                              (originalEstimate . ,effort)
+                                              (remainingEstimate . ,effort))))))))
 
 (defun jiralib2-if-unplan-issue(issue-id)
   "Unplan issue, removing toggle and date."
